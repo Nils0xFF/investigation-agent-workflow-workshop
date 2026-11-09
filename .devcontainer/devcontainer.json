@@ -1,0 +1,28 @@
+{
+  "name": "Building Production-Ready Agentic Workflows",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH=\"$HOME/.local/bin:$PATH\" && curl -LsSf https://mistral.ai/vibe/install.sh | bash && curl -fsSL https://mistral.ai/cli/install.sh | MISTRAL_INSTALL_BUN=1 MISTRAL_NO_MODIFY_PATH=1 bash && make setup && sh scripts/bootstrap-env.sh",
+  "remoteEnv": {
+    "PATH": "${containerEnv:HOME}/.local/bin:${containerEnv:HOME}/.mistral/bin:${containerEnv:HOME}/.bun/bin:${containerEnv:PATH}"
+  },
+  "secrets": {
+    "MISTRAL_API_KEY": {"description": "Studio > API keys, in the workspace you will use all day."},
+    "SENTRY_CONNECTOR_NAME": {"description": "Your Sentry connector's name as Studio shows it, e.g. sentry_d183."},
+    "GITHUB_CONNECTOR_NAME": {"description": "Your GitHub connector's name as Studio shows it, e.g. github_app."},
+    "SENTRY_DSN": {"description": "The DSN of the Sentry project that receives the six demo errors."}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["stateful.runme", "ms-python.python", "charliermarsh.ruff"],
+      "settings": {
+        "workbench.editorAssociations": {"WORKSHOP.md": "runme"},
+        "runme.terminal.interactive": false,
+        "runme.terminal.rows": 20,
+        "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python"
+      }
+    }
+  }
+}

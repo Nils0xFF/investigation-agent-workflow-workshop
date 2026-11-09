@@ -1,0 +1,32 @@
+# Dev tooling for the whole repository. agent/ and workflow/ each have their own pyproject.toml and image.
+[project]
+name = "investigation-agent-workshop"
+version = "0.1.0"
+requires-python = "==3.12.*"
+dependencies = [
+    "mistralai-agents[bashkit]==1.1.3",
+    "mistralai-workflows>=3.17,<4",
+    "mistralai>=3.7",
+    "pydantic>=2,<3",
+    "sentry-sdk>=2,<3",
+]
+[dependency-groups]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "ruff>=0.14"]
+[tool.uv]
+package = false
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["agent", "workflow/apps/worker/src", "evals", "sample-app"]
+filterwarnings = ["ignore::DeprecationWarning"]
+[tool.ruff]
+line-length = 200
+target-version = "py312"
+# The workflow scaffold's own code, tooling and skill come from `mistral init` with their own style; only the module
+# participants write (workflow/apps/worker/src/worker/workflows/) is held to this configuration.
+extend-exclude = ["workflow/.agents", "workflow/packages", "workflow/tools", "workflow/apps/worker/tests", "workflow/apps/worker/src/worker/entrypoints"]
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "RUF"]
+[tool.ruff.lint.isort]
+# agent/, evals/ and sample-app/ run as flat top-level modules, and the workflow scaffold exposes the `worker` package.
+known-first-party = ["ask", "config", "hooks", "investigate", "judge", "main", "report", "run_evals", "scoring", "shop", "worker"]

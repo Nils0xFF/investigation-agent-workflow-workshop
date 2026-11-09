@@ -1,0 +1,9 @@
+{
+  // WORKSHOP.md opens as a Runme notebook: every command and prompt is a cell with a run button.
+  "workbench.editorAssociations": {"WORKSHOP.md": "runme"},
+  // Interactive cells (Vibe) run in the VS Code terminal panel, full size, instead of the small notebook terminal.
+  "runme.terminal.interactive": false,
+  // Background cells (the module 4 workers) stay in the notebook; give them room.
+  "runme.terminal.rows": 20,
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python"
+}
