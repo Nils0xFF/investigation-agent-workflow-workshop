@@ -1,15 +1,32 @@
-from mistralai import agents
+"""The investigation agent: one model, one instructions file, one structured report per turn."""
+
+import os
+from pathlib import Path
+
+import mistralai.agents as agents
+
+from report import InvestigationReport
+
+ROOT = Path(__file__).resolve().parent
+MODEL = "mistral-large-4"
+DEFAULT_AGENT_NAME = os.environ.get("INVESTIGATION_AGENT_NAME", "investigation-agent")
 
 
-@agents.tool
-async def get_weather(city: str) -> dict[str, str]:
-    """Weather for a city."""
-    return {"weather": f"sunny in {city}"}
+def build_agent(*, connectors: bool = True, name: str | None = None) -> agents.Agent:
+    """Build the agent. Building touches no network; connectors resolve when a session starts.
+
+    `connectors` has no effect yet: module 2 wires the Sentry and GitHub connectors in.
+    """
+    return agents.Agent(
+        name=name or DEFAULT_AGENT_NAME,
+        model=MODEL,
+        description="Answers one investigation question about a production error with a validated report.",
+        instructions=(ROOT / "instructions.md").read_text(encoding="utf-8"),
+        output_type=InvestigationReport,
+        max_iterations=32,
+        temperature=0.1,
+    )
 
 
-agent = agents.Agent(
-    model="mistral-large-4",
-    name="agent",
-    instructions="You are a friendly agent. Tell us the weather in a city.",
-    tools=[get_weather],
-)
+# The CLI (`agents info`, `agents chat`, `agents serve`) imports this object at module scope.
+agent = build_agent()
